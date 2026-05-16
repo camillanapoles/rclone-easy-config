@@ -1,0 +1,6 @@
+{
+  "name": "Rclone Config Wizard",
+  "description": "A 100% local, secure GUI builder for rclone configuration blocks. Quickly generate snippets for S3, Google Drive, FTP, and more without exposing credentials.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
