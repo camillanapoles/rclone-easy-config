@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { providers, ProviderConfig, ProviderField } from './providers';
-import { ShieldCheck, Copy, CheckCircle2, AlertTriangle, Terminal, FileCode2, ChevronRight, HelpCircle, Settings2, Info, Cloud, HardDrive, Smartphone, Server } from 'lucide-react';
+import { ShieldCheck, Copy, CheckCircle2, AlertTriangle, Terminal, FileCode2, ChevronRight, HelpCircle, Settings2, Info, Cloud, HardDrive, Smartphone, Server, Globe } from 'lucide-react';
+import { translations, Language } from './i18n';
 
 const Tooltip = ({ text }: { text: string }) => (
   <div className="group relative flex items-center">
@@ -16,6 +17,8 @@ const Tooltip = ({ text }: { text: string }) => (
 );
 
 export default function App() {
+  const [lang, setLang] = useState<Language>('en');
+  const t = translations[lang];
   const [selectedProviderId, setSelectedProviderId] = useState<string>('drive');
   const [remoteName, setRemoteName] = useState<string>('my-cloud');
   const [formData, setFormData] = useState<Record<string, string>>({});
@@ -154,12 +157,29 @@ ${lines.join('\n')}`;
             <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.4)]">
               <Cloud className="w-4 h-4 text-white" />
             </div>
-            <h1 className="font-bold text-lg tracking-tight text-zinc-100">Easy Rclone Setup</h1>
+            <h1 className="font-bold text-lg tracking-tight text-zinc-100">{t.header.title}</h1>
           </div>
-          <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-medium ring-1 ring-emerald-500/20">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">100% Private & Local</span>
-            <span className="sm:hidden">Local</span>
+          <div className="flex items-center gap-4">
+            <div className="relative flex items-center bg-zinc-900 border border-zinc-800 rounded-lg p-1">
+              <Globe className="w-4 h-4 text-zinc-400 ml-2" />
+              <select
+                aria-label="Select Language"
+                value={lang}
+                onChange={(e) => setLang(e.target.value as Language)}
+                className="appearance-none bg-transparent text-sm text-zinc-300 font-medium pl-2 pr-6 py-1 outline-none cursor-pointer hover:text-white transition-colors"
+              >
+                <option value="en">English</option>
+                <option value="pt">Português</option>
+                <option value="zh">中文</option>
+              </select>
+              <ChevronDown className="w-3 h-3 text-zinc-500 absolute right-2 pointer-events-none" />
+            </div>
+            
+            <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-medium ring-1 ring-emerald-500/20">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t.header.badge}</span>
+              <span className="sm:hidden">Local</span>
+            </div>
           </div>
         </div>
       </header>
@@ -167,9 +187,9 @@ ${lines.join('\n')}`;
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4 text-white">Let's connect your storage.</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4 text-white">{t.hero.title}</h2>
           <p className="text-zinc-400 text-base leading-relaxed">
-            Rclone can be complicated. We made it simple. Select your cloud provider below, fill out the basic info, and we'll generate a safe command for you to run. <strong className="text-zinc-300">Your passwords never leave this screen.</strong>
+            {t.hero.description} <strong className="text-zinc-300">{t.hero.secure}</strong>
           </p>
         </div>
 
@@ -182,12 +202,14 @@ ${lines.join('\n')}`;
             <section>
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs ring-1 ring-indigo-500/50">1</div>
-                <h3 className="text-lg font-semibold text-zinc-100">Where are your files?</h3>
+                <h3 className="text-lg font-semibold text-zinc-100">{t.step1.title}</h3>
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                 {providers.map((p) => {
                   const Icon = p.icon;
                   const isActive = selectedProviderId === p.id;
+                  // @ts-ignore
+                  const pName = t.providers[p.id]?.name || p.name;
                   return (
                     <button
                       key={p.id}
@@ -200,7 +222,7 @@ ${lines.join('\n')}`;
                     >
                       <Icon className={`w-7 h-7 ${isActive ? 'text-indigo-400' : 'text-zinc-500'}`} strokeWidth={isActive ? 2 : 1.5} />
                       <span className={`text-sm font-medium ${isActive ? 'text-indigo-200' : 'text-zinc-400'}`}>
-                        {p.name}
+                        {pName}
                       </span>
                       {isActive && (
                         <motion.div 
@@ -219,7 +241,7 @@ ${lines.join('\n')}`;
             <section>
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs ring-1 ring-indigo-500/50">2</div>
-                <h3 className="text-lg font-semibold text-zinc-100">Fill in the details</h3>
+                <h3 className="text-lg font-semibold text-zinc-100">{t.step2.title}</h3>
               </div>
               
               <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-7 shadow-xl">
@@ -228,8 +250,10 @@ ${lines.join('\n')}`;
                     <activeProvider.icon className="w-6 h-6 text-indigo-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-semibold text-zinc-100">{activeProvider.name}</h4>
-                    <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed">{activeProvider.description}</p>
+                    {/* @ts-ignore */}
+                    <h4 className="text-xl font-semibold text-zinc-100">{t.providers[activeProvider.id]?.name || activeProvider.name}</h4>
+                    {/* @ts-ignore */}
+                    <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed">{t.providers[activeProvider.id]?.desc || activeProvider.description}</p>
                   </div>
                 </div>
 
@@ -237,27 +261,30 @@ ${lines.join('\n')}`;
                   {/* Global Remote Name */}
                   <div className="bg-zinc-950/50 p-4 rounded-xl border border-zinc-800/50">
                     <label className="flex items-center gap-2 text-sm font-semibold text-zinc-200 mb-1">
-                      Give this connection a simple nickname
-                      <Tooltip text="Examples: 'movies', 'backup', 'work-drive'. Avoid spaces." />
+                      {t.step2.remoteName}
+                      <Tooltip text={t.step2.remoteNameTooltip} />
                     </label>
-                    <p className="text-xs text-zinc-500 mb-3">You will use this name in your terminal commands (like <code className="text-zinc-400 font-mono bg-zinc-800 px-1 rounded">rclone sync folder/ {remoteName}:</code>)</p>
+                    <p className="text-xs text-zinc-500 mb-3">{t.step2.remoteNameDesc} <code className="text-zinc-400 font-mono bg-zinc-800 px-1 rounded">rclone sync folder/ {remoteName}:</code>)</p>
                     <input
                       type="text"
                       value={remoteName}
                       onChange={(e) => setRemoteName(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
                       className="w-full bg-zinc-950 border border-zinc-700/80 rounded-lg px-4 py-3 text-zinc-100 font-mono text-sm placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-shadow"
-                      placeholder="e.g., google-drive"
+                      placeholder={t.step2.remoteNamePlaceholder}
                     />
                   </div>
 
-                  {visibleFields.map((field) => (
+                  {visibleFields.map((field) => {
+                    // @ts-ignore
+                    const fieldT = t.fields[field.name];
+                    return (
                     <div key={field.name}>
                       <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1">
-                        {field.label}
+                        {fieldT?.label || field.label}
                         {field.required && <span className="text-red-400 font-bold">*</span>}
-                        {field.advanced && <span className="text-[10px] uppercase tracking-wider bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-bold">Pro</span>}
+                        {field.advanced && <span className="text-[10px] uppercase tracking-wider bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-bold">{t.step2.proBadge}</span>}
                       </label>
-                      {field.helperText && <p className="text-xs text-zinc-500 mb-2">{field.helperText}</p>}
+                      {(fieldT?.helper || field.helperText) && <p className="text-xs text-zinc-500 mb-2">{fieldT?.helper || field.helperText}</p>}
                       
                       {field.type === 'select' ? (
                         <div className="relative">
@@ -266,7 +293,7 @@ ${lines.join('\n')}`;
                             onChange={(e) => handleInputChange(field.name, e.target.value)}
                             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-zinc-100 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-shadow"
                           >
-                            <option value="" disabled>Select an option</option>
+                            <option value="" disabled>{t.step2.selectOption}</option>
                             {field.options?.map(opt => (
                               <option key={opt} value={opt}>{opt}</option>
                             ))}
@@ -283,7 +310,7 @@ ${lines.join('\n')}`;
                         />
                       )}
                     </div>
-                  ))}
+                  )})}
 
                   {/* Advanced Toggle */}
                   {hasAdvancedFields && (
@@ -293,7 +320,7 @@ ${lines.join('\n')}`;
                         className="flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors bg-zinc-800/50 hover:bg-zinc-800 px-4 py-2 rounded-full ring-1 ring-zinc-700/50"
                       >
                         <Settings2 className="w-4 h-4" />
-                        {showAdvanced ? "Hide nerd settings" : "Show geeky advanced options"}
+                        {showAdvanced ? t.step2.hideAdvanced : t.step2.showAdvanced}
                       </button>
                     </div>
                   )}
@@ -306,17 +333,17 @@ ${lines.join('\n')}`;
              <section>
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs ring-1 ring-indigo-500/50">3</div>
-                <h3 className="text-lg font-semibold text-zinc-100">How will you access the files? (Virtual Drive)</h3>
+                <h3 className="text-lg font-semibold text-zinc-100">{t.step3.title}</h3>
               </div>
 
                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-7 shadow-xl">
                  <p className="text-zinc-400 text-sm mb-6">
-                   Rclone can "mount" your cloud storage so it looks like a regular USB drive on your device. We use VFS (Virtual File System) settings tailored to your specific device to prevent stuttering and save data.
+                   {t.step3.desc}
                  </p>
 
                  <div className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-zinc-300 mb-3">What kind of device is running this?</label>
+                      <label className="block text-sm font-medium text-zinc-300 mb-3">{t.step3.deviceLabel}</label>
                       <div className="grid grid-cols-3 gap-3">
                          <button
                            onClick={() => setMountDevice('desktop')}
@@ -324,7 +351,7 @@ ${lines.join('\n')}`;
                             ${mountDevice === 'desktop' ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
                          >
                            <HardDrive className="w-5 h-5" />
-                           PC / Laptop
+                           {t.step3.deviceDesktop}
                          </button>
                          <button
                            onClick={() => setMountDevice('android')}
@@ -332,7 +359,7 @@ ${lines.join('\n')}`;
                             ${mountDevice === 'android' ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
                          >
                            <Smartphone className="w-5 h-5" />
-                           Android App (RSAF/RCX)
+                           {t.step3.deviceAndroid}
                          </button>
                          <button
                            onClick={() => setMountDevice('server')}
@@ -340,49 +367,49 @@ ${lines.join('\n')}`;
                             ${mountDevice === 'server' ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
                          >
                            <Server className="w-5 h-5" />
-                           Media Server
+                           {t.step3.deviceServer}
                          </button>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-zinc-300 mb-3">What level of access do you need?</label>
+                      <label className="block text-sm font-medium text-zinc-300 mb-3">{t.step3.accessLabel}</label>
                       <div className="grid grid-cols-2 gap-3">
                          <button
                            onClick={() => setMountAccess('read')}
                            className={`p-3 rounded-lg border text-sm font-medium transition-colors
                             ${mountAccess === 'read' ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
                          >
-                           Read Only (Safer, just watching/downloading)
+                           {t.step3.accessRead}
                          </button>
                          <button
                            onClick={() => setMountAccess('write')}
                            className={`p-3 rounded-lg border text-sm font-medium transition-colors
                             ${mountAccess === 'write' ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
                          >
-                           Full Access (Can edit & delete files)
+                           {t.step3.accessWrite}
                          </button>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-zinc-300 mb-3">How do you prefer caching?</label>
+                      <label className="block text-sm font-medium text-zinc-300 mb-3">{t.step3.cacheLabel}</label>
                       <div className="grid grid-cols-2 gap-3">
                          <button
                            onClick={() => setMountCache('full')}
                            className={`p-3 rounded-lg border text-sm font-medium transition-colors text-left
                             ${mountCache === 'full' ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
                          >
-                           <div className="font-bold mb-1">Full Cache (Best)</div>
-                           <div className="text-xs opacity-70 font-normal">Pre-downloads chunks for smooth media playing. Used more local storage.</div>
+                           <div className="font-bold mb-1">{t.step3.cacheFullTitle}</div>
+                           <div className="text-xs opacity-70 font-normal">{t.step3.cacheFullDesc}</div>
                          </button>
                          <button
                            onClick={() => setMountCache('minimal')}
                            className={`p-3 rounded-lg border text-sm font-medium transition-colors text-left
                             ${mountCache === 'minimal' ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
                          >
-                           <div className="font-bold mb-1">Minimal Cache</div>
-                           <div className="text-xs opacity-70 font-normal">Saves your device storage. Good for small files or low-end phones.</div>
+                           <div className="font-bold mb-1">{t.step3.cacheMinimalTitle}</div>
+                           <div className="text-xs opacity-70 font-normal">{t.step3.cacheMinimalDesc}</div>
                          </button>
                       </div>
                     </div>
@@ -397,7 +424,7 @@ ${lines.join('\n')}`;
           <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-4">
              <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs ring-1 ring-emerald-500/50">4</div>
-                <h3 className="text-lg font-semibold text-zinc-100">You're ready!</h3>
+                <h3 className="text-lg font-semibold text-zinc-100">{t.step4.title}</h3>
               </div>
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
@@ -405,37 +432,42 @@ ${lines.join('\n')}`;
               {/* How-to helper */}
               <div className="bg-indigo-500/10 p-4 border-b border-indigo-500/20">
                 <h4 className="flex items-center gap-2 text-indigo-300 font-semibold mb-2 text-sm">
-                   <Info className="w-4 h-4" /> How do I use this?
+                   <Info className="w-4 h-4" /> {t.step4.howTo}
                 </h4>
                 {activeTab === 'cli' && (
                   <ol className="text-sm text-indigo-200/80 space-y-1.5 list-decimal list-inside marker:text-indigo-400 font-medium">
-                    <li>Copy the <strong>CLI Command</strong> below.</li>
-                    <li>Open your Terminal or Command Prompt.</li>
-                    <li>Paste the text and push Enter.</li>
-                    {activeProvider.hasOAuth && <li>Your internet browser will pop up to log you in automatically.</li>}
+                    {t.step4.cliSteps.map((step, idx) => (
+                      <li key={idx}>
+                        {idx === 0 ? <>{step.split('CLI Command')[0]}<strong>CLI Command</strong>{step.split('CLI Command')[1] || ''}</> : step}
+                      </li>
+                    ))}
                   </ol>
                 )}
                 {activeTab === 'mount' && mountDevice === 'android' && (
                    <ol className="text-sm text-indigo-200/80 space-y-1.5 list-decimal list-inside marker:text-indigo-400 font-medium">
-                    <li>Copy the <strong>Config lines</strong> below.</li>
-                    <li>Open your Android rclone app (RCX, Round Sync, RSAF).</li>
-                    <li>Tap your remote to configure it, find VFS Options.</li>
-                    <li>Paste the lines EXACTLY as shown one per line.</li>
+                    {t.step4.mountAndroidSteps.map((step, idx) => (
+                      <li key={idx}>
+                        {idx === 0 ? <>{step.split('Config lines')[0]}<strong>Config lines</strong>{step.split('Config lines')[1] || ''}</> : step}
+                      </li>
+                    ))}
                   </ol>
                 )}
                 {activeTab === 'mount' && mountDevice !== 'android' && (
                    <ol className="text-sm text-indigo-200/80 space-y-1.5 list-decimal list-inside marker:text-indigo-400 font-medium">
-                    <li>Copy the <strong>Mount Command</strong> below.</li>
-                    <li>Ensure you have run the CLI configuration setup first.</li>
-                    <li>Open your Terminal or Command Prompt.</li>
-                    <li>Paste the text and push Enter to start the virtual drive.</li>
+                    {t.step4.mountDesktopSteps.map((step, idx) => (
+                      <li key={idx}>
+                        {idx === 0 ? <>{step.split('Mount Command')[0]}<strong>Mount Command</strong>{step.split('Mount Command')[1] || ''}</> : step}
+                      </li>
+                    ))}
                   </ol>
                 )}
                 {activeTab === 'conf' && (
                    <ol className="text-sm text-indigo-200/80 space-y-1.5 list-decimal list-inside marker:text-indigo-400 font-medium">
-                    <li>This is the raw <code>rclone.conf</code> format.</li>
-                    <li>Use this if you are manually editing your config file.</li>
-                    <li>Or, import this directly into Android apps like RCX/RSAF.</li>
+                    {t.step4.confSteps.map((step, idx) => (
+                      <li key={idx}>
+                        {idx === 0 ? <>{step.split('rclone.conf')[0]}<code>rclone.conf</code>{step.split('rclone.conf')[1] || ''}</> : step}
+                      </li>
+                    ))}
                   </ol>
                 )}
               </div>
@@ -449,7 +481,7 @@ ${lines.join('\n')}`;
                   `}
                 >
                   <Terminal className="w-4 h-4" />
-                  CLI Command
+                  {t.step4.tabCli}
                 </button>
                 <button
                   onClick={() => setActiveTab('mount')}
@@ -458,7 +490,7 @@ ${lines.join('\n')}`;
                   `}
                 >
                   <HardDrive className="w-4 h-4" />
-                  Mount Drive (VFS)
+                  {t.step4.tabMount}
                 </button>
                 <button
                   onClick={() => setActiveTab('conf')}
@@ -467,7 +499,7 @@ ${lines.join('\n')}`;
                   `}
                 >
                   <FileCode2 className="w-4 h-4" />
-                  rclone.conf
+                  {t.step4.tabConf}
                 </button>
               </div>
 
@@ -497,7 +529,7 @@ ${lines.join('\n')}`;
                       className="p-5"
                     >
                       <p className="text-zinc-500 text-xs mb-3 font-medium uppercase tracking-wider">
-                        {mountDevice === 'android' ? 'Apply these VFS settings in your app:' : 'Run this after your config is set up:'}
+                        {mountDevice === 'android' ? t.step4.applyVfs : t.step4.runAfterConfig}
                       </p>
                       <pre className="font-mono text-[13px] text-cyan-400 whitespace-pre-wrap leading-relaxed break-all selection:bg-cyan-500/40">
                         {generateMountCommand()}
@@ -517,7 +549,7 @@ ${lines.join('\n')}`;
                         <div className="mb-4 bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 flex gap-3 text-sm text-amber-200">
                           <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
                           <div>
-                            <strong>Careful!</strong> Rclone needs passwords in <code>rclone.conf</code> to be securely encrypted. If you just paste your raw password here into the file, it will break. It is ALWAYS safer to use the <strong>CLI Command</strong> tab instead so Rclone handles it!
+                            {t.step4.warningRcloneConf}
                           </div>
                         </div>
                       )}
@@ -543,12 +575,12 @@ ${lines.join('\n')}`;
                     {copiedTab === activeTab ? (
                       <>
                         <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        <span className="text-emerald-400">Copied!</span>
+                        <span className="text-emerald-400">{t.step4.copied}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="w-4 h-4 text-zinc-400" />
-                        COPY TEXT
+                        {t.step4.copyText}
                       </>
                     )}
                   </button>
